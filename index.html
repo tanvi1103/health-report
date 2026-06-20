@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalsAI - Health Prediction & Analytics Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar/Brand Panel -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-pulse"></div>
+                <span class="brand-name">Vitals<span class="accent-text">AI</span></span>
+            </div>
+            <div class="tagline">Clinical Analytics & Health Risk Engine</div>
+        </header>
+
+        <!-- Main Dashboard View -->
+        <main class="main-content">
+            <!-- Statistics Panel -->
+            <section class="stats-grid">
+                <div class="stat-card" id="stat-total">
+                    <div class="stat-icon-wrapper blue-glow">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-title">Total Records</h3>
+                        <div class="stat-value" id="val-total-records">0</div>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-critical">
+                    <div class="stat-icon-wrapper red-glow">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-title">Critical Risk Alerts</h3>
+                        <div class="stat-value text-critical" id="val-critical-alerts">0</div>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-avg-glucose">
+                    <div class="stat-icon-wrapper yellow-glow">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-title">Avg Glucose</h3>
+                        <div class="stat-value" id="val-avg-glucose">0 <span class="unit">mg/dL</span></div>
+                    </div>
+                </div>
+                <div class="stat-card" id="stat-avg-cholesterol">
+                    <div class="stat-icon-wrapper green-glow">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-title">Avg Cholesterol</h3>
+                        <div class="stat-value" id="val-avg-cholesterol">0 <span class="unit">mg/dL</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions bar -->
+            <div class="action-bar">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="patient-search" placeholder="Search patients by name or email...">
+                </div>
+                <button class="btn btn-primary" id="btn-add-patient">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Patient Record
+                </button>
+            </div>
+
+            <!-- Table Data View -->
+            <div class="table-container">
+                <table class="patient-table" id="patients-table">
+                    <thead>
+                        <tr>
+                            <th>Patient Information</th>
+                            <th>Contact Details</th>
+                            <th class="num-col">Glucose <span class="th-sub">(mg/dL)</span></th>
+                            <th class="num-col">Haemoglobin <span class="th-sub">(g/dL)</span></th>
+                            <th class="num-col">Cholesterol <span class="th-sub">(mg/dL)</span></th>
+                            <th>AI Predictive Diagnostic Remarks</th>
+                            <th class="actions-col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patient-rows">
+                        <!-- Filled dynamically -->
+                        <tr class="table-loading">
+                            <td colspan="7">
+                                <div class="spinner-wrapper">
+                                    <div class="spinner"></div>
+                                    <span>Retrieving database records...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="no-records-view hidden" id="no-records">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <p>No patient records found.</p>
+                    <button class="btn btn-secondary btn-sm" id="btn-create-first">Create First Record</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Slide-over Modal -->
+    <div class="modal-backdrop hidden" id="form-modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2 id="modal-title">New Patient Record</h2>
+                <button class="close-btn" id="btn-close-modal">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form class="patient-form" id="patient-form" novalidate>
+                <input type="hidden" id="patient-id" value="">
+                
+                <div class="form-section">
+                    <h3 class="section-title">Demographics</h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="p-name">Full Name</label>
+                            <input type="text" id="p-name" placeholder="John Doe" required>
+                            <span class="error-msg" id="err-name"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="p-dob">Date of Birth</label>
+                            <input type="date" id="p-dob" required>
+                            <span class="error-msg" id="err-dob"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="p-email">Email Address</label>
+                            <input type="email" id="p-email" placeholder="john.doe@example.com" required>
+                            <span class="error-msg" id="err-email"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Laboratory Blood Biomarkers</h3>
+                    <div class="form-grid tri-grid">
+                        <div class="form-group">
+                            <label for="p-glucose">Glucose (mg/dL)</label>
+                            <input type="number" step="0.1" id="p-glucose" placeholder="e.g. 95" required>
+                            <div class="field-range-hint">Normal: 70 - 100 mg/dL</div>
+                            <span class="error-msg" id="err-glucose"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="p-haemoglobin">Haemoglobin (g/dL)</label>
+                            <input type="number" step="0.1" id="p-haemoglobin" placeholder="e.g. 14.5" required>
+                            <div class="field-range-hint">Normal: 12 - 17.5 g/dL</div>
+                            <span class="error-msg" id="err-haemoglobin"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="p-cholesterol">Cholesterol (mg/dL)</label>
+                            <input type="number" step="0.1" id="p-cholesterol" placeholder="e.g. 185" required>
+                            <div class="field-range-hint">Normal: < 200 mg/dL</div>
+                            <span class="error-msg" id="err-cholesterol"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-form">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-form">
+                        <span id="submit-text">Run Diagnosis & Save</span>
+                        <div class="loader-inline hidden" id="submit-loader"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Dialog -->
+    <div class="modal-backdrop hidden" id="delete-modal">
+        <div class="modal-content glass-card delete-dialog-content">
+            <div class="delete-icon-warning animate-bounce">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h2>Confirm Record Deletion</h2>
+            <p>Are you sure you want to delete the clinical record for <strong id="delete-patient-name">patient</strong>? This action is permanent and cannot be undone.</p>
+            <div class="modal-actions delete-actions">
+                <button class="btn btn-secondary" id="btn-cancel-delete">Cancel</button>
+                <button class="btn btn-danger" id="btn-confirm-delete">Delete Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
